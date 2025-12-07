@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Gem, Rocket, Crown, Zap, HeartCrack, Eye, Target, Sparkles, Lock, ArrowRight } from "lucide-react";
+import { Gem, Rocket, Crown, Zap, HeartCrack, Eye, Target, Sparkles, Lock, ArrowRight, Copy, Check } from "lucide-react";
 import { ChatBubble } from "./chat/ChatBubble";
 import { TypingIndicator } from "./chat/TypingIndicator";
 import { OptionButtons } from "./chat/OptionButtons";
@@ -11,6 +11,8 @@ import { Carousel } from "./chat/Carousel";
 import { TestimonialCarousel } from "./chat/TestimonialCarousel";
 import { ValueStack } from "./chat/ValueStack";
 import { PricingCard } from "./chat/PricingCard";
+import { HeroMentoringCard } from "./chat/HeroMentoringCard";
+import { CommunityAccessCard } from "./chat/CommunityAccessCard";
 
 // Links
 const TELEGRAM_LINK = "https://t.me/+3xm_72adFXc5NWRl";
@@ -27,11 +29,14 @@ const GOLD = '#FCD34D';  // Primary Gold - Same across ALL elements
 type MessageType =
     | { type: "bot"; content: React.ReactNode; typingDuration?: number; delay?: number; isGold?: boolean }
     | { type: "options"; options: { id: string; label: string; icon?: React.ReactNode; sublabel?: string }[] }
-    | { type: "action"; label: string; nextPhase?: number; variant?: "gold" | "payment" }
+    | { type: "action"; label: string; nextPhase?: number; externalLink?: string; variant?: "gold" | "payment" }
     | { type: "carousel"; slides: { id: string; image?: string; caption?: string; content?: React.ReactNode }[] }
     | { type: "testimonialCarousel" }
     | { type: "valueStack" }
-    | { type: "pricingCard" };
+    | { type: "pricingCard" }
+    | { type: "heroMentoringCard" }
+    | { type: "textSeparator"; text: string }
+    | { type: "communityAccessCard" };
 
 interface DisplayedMessage {
     id: string;
@@ -40,32 +45,64 @@ interface DisplayedMessage {
 
 // Conversation Flow Data
 const PHASE_MESSAGES: Record<number, MessageType[]> = {
-    // PHASE 1: THE FILTER
+    // 💎 PHASE 1: THE "ENGINEERED SUCCESS" FRAME
     1: [
         {
+            // BUBBLE 1: The Shock Context (Underdog Setup)
             type: "bot",
-            content: <>Gue <strong style={{ color: GOLD, fontWeight: 600 }}>Luthfi</strong>. Mahasiswa Teknik & Atlet Silat.</>,
-            typingDuration: 800,
-            delay: 1000,
+            content: <>Gue <strong style={{ color: GOLD, fontWeight: 600 }}>Luthfi</strong>. Umur 19, Mahasiswa Teknik, & Atlet Silat. Harusnya gue bokek & gak punya waktu.</>,
+            typingDuration: 1000,
+            delay: 2500,
         },
         {
+            // BUBBLE 2: The Authority Reveal (Punchline)
             type: "bot",
-            content: <>Tips lengkap dari <strong style={{ color: GOLD, fontWeight: 600 }}>video gue</strong> yang lo cari udah gue siapin di ujung chat ini, aman.</>,
-            typingDuration: 1200,
-            delay: 1000,
-        },
-        {
-            type: "bot",
-            content: <>Tapi sistem ini power-nya gede. Gue cuma mau kasih ke yang serius. Lo mau <em>'Coba-coba'</em> atau mau bangun <strong style={{ color: GOLD, fontWeight: 600 }}>'Income Utama'</strong> serius?</>,
+            content: <>Tapi faktanya, gue pegang <strong style={{ color: GOLD, fontWeight: 600 }}>3 Sumber Income Digital</strong>. Rahasianya? Gue gak kerja pake otot. Gue bangun sistem pake <strong style={{ color: GOLD, fontWeight: 600 }}>AI</strong>.</>,
             typingDuration: 1500,
-            delay: 1000,
+            delay: 2500,
+        },
+        {
+            // BUBBLE 3: The Promise Match
+            type: "bot",
+            content: <>Lu nyari info lengkap dari konten gue kan? Tenang, udah gue siapin di <strong style={{ color: GOLD, fontWeight: 600 }}>akhir chat ini</strong>.</>,
+            typingDuration: 1200,
+            delay: 2500,
+        },
+        {
+            // BUBBLE 4: The Ambition Filter
+            type: "bot",
+            content: <>Tapi sebelum gue kasih, gue perlu tau mindset lo. Lo ke sini cuma mau cari <em>Uang Jajan</em> tambahan, atau mau bangun <strong style={{ color: GOLD, fontWeight: 600 }}>Income Utama</strong> serius?</>,
+            typingDuration: 1500,
+            delay: 2500,
         },
         {
             type: "options",
             options: [
-                { id: "downsell", label: "Cuma Mau Liat-Liat", sublabel: "Akses Free Channel", icon: <Eye size={18} strokeWidth={2} /> },
-                { id: "serious", label: "Serius Mau Income", sublabel: "Lanjut ke Private Mentoring", icon: <Target size={18} strokeWidth={2} /> },
+                { id: "uang-jajan", label: "Cari Uang Jajan", sublabel: "Yang penting dapet duit cepet & receh.", icon: <Eye size={18} strokeWidth={2} /> },
+                { id: "income-utama", label: "Bangun Income Utama", sublabel: "Fokus bangun Income Jangka Panjang & stabil.", icon: <Target size={18} strokeWidth={2} /> },
             ],
+        },
+    ],
+
+    // PHASE 1B: SCENARIO A - GRATISAN (Modal Waktu)
+    11: [
+        {
+            type: "bot",
+            content: <>Oke, gue hargai semangat juang lo. Gue taruh <strong style={{ color: GOLD, fontWeight: 600 }}>Panduan Lengkapnya</strong> (berupa Notion System) eksklusif di dalam VIP Channel gue.</>,
+            typingDuration: 1200,
+            delay: 500,
+        },
+        {
+            type: "bot",
+            content: <>Masuk lewat link di bawah, lalu langsung <strong style={{ color: GOLD, fontWeight: 600 }}>Cek Pinned Message</strong> (Pesan Tersemat) paling atas buat ambil aksesnya.</>,
+            typingDuration: 1200,
+            delay: 0,
+        },
+        {
+            type: "action",
+            label: "JOIN VIP CHANNEL",
+            externalLink: TELEGRAM_LINK,
+            variant: "gold",
         },
     ],
 
@@ -202,7 +239,7 @@ const PHASE_MESSAGES: Record<number, MessageType[]> = {
             type: "bot",
             content: <>Metode ini bukan teori. Gue udah training <strong style={{ color: GOLD, fontWeight: 600 }}>ratusan orang</strong> lewat Zoom pake metode ini.</>,
             typingDuration: 1200,
-            delay: 500,
+            delay: 1500,
         },
         {
             type: "testimonialCarousel",
@@ -221,22 +258,23 @@ const PHASE_MESSAGES: Record<number, MessageType[]> = {
         },
     ],
 
-    // PHASE 6: THE OFFER
+    // PHASE 6: THE OFFER (THE CROSSROADS)
     6: [
         {
             type: "bot",
-            content: <>Pilihan bagus. <strong style={{ color: GOLD, fontWeight: 600 }}>Investasi bukan biaya, tapi komitmen</strong>. Ini Value Stack yang lo dapet kalau join sekarang:</>,
-            typingDuration: 1500,
+            content: <>Sistemnya udah gue bongkar. Sekarang <strong style={{ color: GOLD, fontWeight: 600 }}>bolanya di tangan lo</strong>. Gue kasih 2 Pilihan buat akses materi ini:</>,
+            typingDuration: 1000,
             delay: 500,
         },
-        { type: "valueStack" },
         {
             type: "bot",
-            content: <>Normalnya, akses mentoring sedalam ini biayanya jutaan. Tapi karena ini <strong style={{ color: GOLD, fontWeight: 600 }}>Beta Launch</strong>...</>,
-            typingDuration: 1200,
-            delay: 1000,
+            content: <>Lo bisa <em>Ulik Sendiri</em> materinya di komunitas (Gratis, tapi lo harus trial-error sendirian), <strong style={{ color: GOLD, fontWeight: 600 }}>ATAU</strong> lo bisa ambil Full Mentoring (Berbayar, gue bimbing tangan lo sampai berpenghasilan).</>,
+            typingDuration: 1500,
+            delay: 800,
         },
-        { type: "pricingCard" },
+        { type: "heroMentoringCard" },
+        { type: "textSeparator", text: "Atau ambil jalur lambat..." },
+        { type: "communityAccessCard" },
     ],
 };
 
@@ -333,6 +371,7 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
         // Handle action button
         if (currentMessage.type === "action") {
             const id = `msg-${messageIdRef.current++}`;
+            const externalLink = currentMessage.externalLink;
             setDisplayedMessages((prev) => [
                 ...prev,
                 {
@@ -341,7 +380,7 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
                         <ActionButton
                             key={id}
                             label={currentMessage.label}
-                            onClick={() => handleActionClick(currentMessage.nextPhase)}
+                            onClick={() => externalLink ? window.open(externalLink, "_blank") : handleActionClick(currentMessage.nextPhase)}
                             variant={currentMessage.variant || "gold"}
                         />
                     ),
@@ -413,6 +452,73 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
                 },
             ]);
         }
+
+        // Handle hero mentoring card
+        if (currentMessage.type === "heroMentoringCard") {
+            const id = `msg-${messageIdRef.current++}`;
+            setDisplayedMessages((prev) => [
+                ...prev,
+                {
+                    id,
+                    element: (
+                        <HeroMentoringCard
+                            key={id}
+                            originalPrice="Rp 2.000.000"
+                            currentPrice="Rp 750.000"
+                            onCtaClick={handleCtaClick}
+                        />
+                    ),
+                },
+            ]);
+            setTimeout(() => setProcessingIndex((prev) => prev + 1), 800);
+        }
+
+        // Handle text separator
+        if (currentMessage.type === "textSeparator") {
+            const id = `msg-${messageIdRef.current++}`;
+            setDisplayedMessages((prev) => [
+                ...prev,
+                {
+                    id,
+                    element: (
+                        <motion.div
+                            key={id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="w-full text-center py-4"
+                        >
+                            <span
+                                style={{
+                                    color: '#666',
+                                    fontSize: '13px',
+                                    fontStyle: 'italic',
+                                }}
+                            >
+                                {currentMessage.text}
+                            </span>
+                        </motion.div>
+                    ),
+                },
+            ]);
+            setTimeout(() => setProcessingIndex((prev) => prev + 1), 500);
+        }
+
+        // Handle community access card
+        if (currentMessage.type === "communityAccessCard") {
+            const id = `msg-${messageIdRef.current++}`;
+            setDisplayedMessages((prev) => [
+                ...prev,
+                {
+                    id,
+                    element: (
+                        <CommunityAccessCard
+                            key={id}
+                            onCtaClick={handleGhostClick}
+                        />
+                    ),
+                },
+            ]);
+        }
     }, [processingIndex, messageQueue]);
 
     // Handle option selection
@@ -458,9 +564,11 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
 
         // Route based on option
         setTimeout(() => {
-            if (optionId === "downsell") {
-                window.open(TELEGRAM_LINK, "_blank");
-            } else if (optionId === "serious") {
+            if (optionId === "uang-jajan") {
+                // Cari Uang Jajan - ke Phase 1B (gratisan/komunitas)
+                transitionToPhase(11);
+            } else if (optionId === "income-utama") {
+                // Bangun Income Utama - lanjut ke diagnosis
                 transitionToPhase(2);
             } else if (optionId === "skill-no-money") {
                 loadPhaseMessages(21, () => transitionToPhase(3));
@@ -516,10 +624,23 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
 
     // Payment popup state
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    // Handle copy number
+    const handleCopyNumber = async () => {
+        try {
+            await navigator.clipboard.writeText(WHATSAPP_NUMBER);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
 
     // Handle CTA click - show popup first
     const handleCtaClick = () => {
         setShowPaymentPopup(true);
+        setCopied(false); // Reset copied state when popup opens
     };
 
     // Proceed to payment after popup
@@ -619,15 +740,103 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
                                             className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
                                             style={{ background: 'rgba(252, 211, 77, 0.2)', color: GOLD, fontSize: '13px', fontWeight: 600 }}
                                         >1</div>
-                                        <div>
-                                            <p style={{ color: '#E5E5E5', fontSize: '14px', lineHeight: 1.5 }}>Screenshot nomor WA ini:</p>
+                                        <div className="flex-1">
+                                            <p style={{ color: '#E5E5E5', fontSize: '14px', lineHeight: 1.5 }}>Screenshot atau Copy nomor WA ini:</p>
                                             <div
-                                                className="mt-2 px-4 py-3 rounded-lg flex items-center justify-between"
+                                                className="mt-2 px-4 py-3 rounded-lg flex items-center gap-3"
                                                 style={{ background: 'rgba(252, 211, 77, 0.1)', border: '1px solid rgba(252, 211, 77, 0.2)' }}
                                             >
-                                                <span style={{ color: GOLD, fontSize: '16px', fontWeight: 600, letterSpacing: '0.05em' }}>{WHATSAPP_NUMBER}</span>
-                                                <Sparkles size={16} style={{ color: GOLD }} />
+                                                <span style={{ color: GOLD, fontSize: '16px', fontWeight: 600, letterSpacing: '0.05em', flex: 1 }}>{WHATSAPP_NUMBER}</span>
+
+                                                {/* Copy Button with Eye-catching Effect */}
+                                                <motion.button
+                                                    onClick={handleCopyNumber}
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className="relative flex items-center justify-center rounded-lg overflow-hidden"
+                                                    style={{
+                                                        width: '44px',
+                                                        height: '36px',
+                                                        background: copied
+                                                            ? 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)'
+                                                            : `linear-gradient(135deg, ${GOLD} 0%, #E5C558 100%)`,
+                                                        boxShadow: copied
+                                                            ? '0 4px 15px rgba(34, 197, 94, 0.4)'
+                                                            : `0 4px 15px ${GOLD}50`,
+                                                        transition: 'all 0.3s ease',
+                                                    }}
+                                                >
+                                                    {/* Pulse Animation Ring - Only when not copied */}
+                                                    {!copied && (
+                                                        <motion.div
+                                                            className="absolute inset-0 rounded-lg"
+                                                            style={{
+                                                                border: `2px solid ${GOLD}`,
+                                                            }}
+                                                            animate={{
+                                                                scale: [1, 1.3, 1.3],
+                                                                opacity: [0.8, 0, 0],
+                                                            }}
+                                                            transition={{
+                                                                duration: 1.5,
+                                                                repeat: Infinity,
+                                                                ease: 'easeOut',
+                                                            }}
+                                                        />
+                                                    )}
+
+                                                    {/* Shimmer Effect */}
+                                                    {!copied && (
+                                                        <motion.div
+                                                            className="absolute inset-0"
+                                                            style={{
+                                                                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                                                            }}
+                                                            animate={{
+                                                                x: ['-100%', '100%'],
+                                                            }}
+                                                            transition={{
+                                                                duration: 1.5,
+                                                                repeat: Infinity,
+                                                                ease: 'easeInOut',
+                                                                repeatDelay: 0.5,
+                                                            }}
+                                                        />
+                                                    )}
+
+                                                    {/* Icon */}
+                                                    <motion.div
+                                                        initial={false}
+                                                        animate={{
+                                                            scale: copied ? [1, 1.2, 1] : 1,
+                                                            rotate: copied ? [0, -10, 10, 0] : 0,
+                                                        }}
+                                                        transition={{ duration: 0.3 }}
+                                                        className="relative z-10"
+                                                    >
+                                                        {copied ? (
+                                                            <Check size={18} strokeWidth={3} style={{ color: '#fff' }} />
+                                                        ) : (
+                                                            <Copy size={16} strokeWidth={2.5} style={{ color: '#0A0A0A' }} />
+                                                        )}
+                                                    </motion.div>
+                                                </motion.button>
                                             </div>
+
+                                            {/* Copied Feedback */}
+                                            <AnimatePresence>
+                                                {copied && (
+                                                    <motion.p
+                                                        initial={{ opacity: 0, y: -5 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0 }}
+                                                        className="mt-2 text-xs font-medium"
+                                                        style={{ color: '#22C55E' }}
+                                                    >
+                                                        ✓ Nomor berhasil dicopy!
+                                                    </motion.p>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
                                     </div>
 
