@@ -2,139 +2,175 @@
 @config "../tailwind.config.ts";
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #EDEDED;
-  --gold-accent: #D4AF37;
+  /* Core Palette - True OLED Black */
+  --background: #000000;
+  --foreground: #F5F5F0;
+  /* Soft off-white for better reading comfort */
+
+  /* THE GOLD STANDARD - Primary Gold: #FCD34D (Amber terang) */
+  --gold-50: #FFFBEB;
+  --gold-100: #FEF3C7;
+  --gold-200: #FDE68A;
+  --gold-300: #FCD34D;
+  --gold-400: #FCD34D;
+  --gold-500: #FCD34D;
+  /* Primary Gold - THE STANDARD */
+  --gold-600: #E5C558;
+  --gold-700: #D4B866;
+  --gold-800: #B8A045;
+  --gold-900: #8B7A30;
+
+  /* Semantic Luxury Token aliases */
+  --lux-glass-border: rgba(255, 255, 255, 0.08);
+  --lux-glass-surface: rgba(20, 20, 20, 0.6);
+  --lux-gold-gradient: linear-gradient(135deg, #FCD34D 0%, #E5C558 50%, #D4B866 100%);
+  --lux-gold-shine: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   overflow-x: hidden;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Noise Texture Overlay */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* Premium Typography */
+.font-display {
+  font-family: var(--font-outfit), var(--font-geist-sans), sans-serif;
+  letter-spacing: -0.02em;
+  /* Tighter for display text */
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes pulse-glow-gold {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(252, 211, 77, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(252, 211, 77, 0.25);
+  }
+}
+
+/* ===== UTILITIES ===== */
+
+/* 1. Obsidian Glass (Darker, Glossier, Premium) */
+.glass-obsidian {
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* 2. Champagne Glass (For Highlights/Active) */
+.glass-champagne {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(252, 211, 77, 0.15);
+  /* Subtle gold border */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 248, 220, 0.05);
+  /* Warm top specular */
+}
+
+/* 3. Text Gradient (Liquid Gold) */
+.text-gold-liquid {
+  background: linear-gradient(to bottom right, #FFFBEB 10%, #FCD34D 45%, #FDE68A 60%, #E5C558 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Fallback */
+  text-shadow: 0 2px 10px rgba(252, 211, 77, 0.1);
+}
+
+/* 4. Cinematic Overlay (Vignette) */
+.cinematic-vignette {
+  background: radial-gradient(circle at 50% 50%,
+      transparent 40%,
+      rgba(0, 0, 0, 0.4) 80%,
+      rgba(0, 0, 0, 0.9) 100%);
   pointer-events: none;
-  z-index: 50;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* Scrollbar styling for premium feel */
-::-webkit-scrollbar {
-  width: 6px;
+/* 5. Button Premium Sheen */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
 }
 
-::-webkit-scrollbar-track {
-  background: #0A0A0A;
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 100%);
+  transform: skewX(-20deg);
+  animation: shimmer 4s infinite ease-in-out;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
+/* Noise Texture (Subtler) */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #D4AF37;
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* iOS Safe Area Utilities */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-.pt-safe {
-  padding-top: env(safe-area-inset-top, 0px);
-}
-
-/* Hide scrollbar but allow scrolling */
-.scrollbar-hide {
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+/* Mobile Safe Areas */
+.safe-pb {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Gold gradient text utility */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #B38728 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Gold glow effect */
-.glow-gold {
-  box-shadow:
-    0 0 20px rgba(191, 149, 63, 0.3),
-    0 0 40px rgba(212, 175, 55, 0.15);
-}
-
-/* Prevent body scroll when modal/overlay is open */
-body.no-scroll {
-  overflow: hidden;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Focus visible styles for keyboard navigation */
-:focus-visible {
-  outline: 2px solid #BF953F;
-  outline-offset: 2px;
-}
-
-/* Screen reader only utility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-.sr-only.focus\:not-sr-only:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin: 0;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-
-/* Optimized noise overlay performance */
-body::before {
-  will-change: opacity;
+.safe-pt {
+  padding-top: env(safe-area-inset-top);
 }
