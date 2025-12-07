@@ -15,6 +15,8 @@ import { PricingCard } from "./chat/PricingCard";
 // Links
 const TELEGRAM_LINK = "https://t.me/+3xm_72adFXc5NWRl";
 const BAGIBON_LINK = "https://app.midtrans.com/payment-links/1765019170772";
+const WHATSAPP_NUMBER = "0881023221414";
+const WHATSAPP_LINK = `https://wa.me/62881023221414?text=Halo%20Kak%20Luthfi,%20saya%20sudah%20bayar%20Private%20Mentoring.%20Berikut%20bukti%20transfernya:`;
 
 // ════════════════════════════════════════════════════════════════════════════
 // DESIGN TOKENS - THE GOLD STANDARD (Imported from ChatBubble for consistency)
@@ -512,8 +514,17 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
         }
     };
 
-    // Handle CTA click
+    // Payment popup state
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+
+    // Handle CTA click - show popup first
     const handleCtaClick = () => {
+        setShowPaymentPopup(true);
+    };
+
+    // Proceed to payment after popup
+    const handleProceedToPayment = () => {
+        setShowPaymentPopup(false);
         window.open(BAGIBON_LINK, "_blank");
     };
 
@@ -557,6 +568,117 @@ export function ChatInterface({ onInteraction }: ChatInterfaceProps) {
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Payment Confirmation Popup */}
+            <AnimatePresence>
+                {showPaymentPopup && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        style={{ background: 'rgba(0,0,0,0.85)' }}
+                        onClick={() => setShowPaymentPopup(false)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="relative w-full max-w-sm rounded-2xl overflow-hidden"
+                            style={{
+                                background: 'rgba(20, 20, 20, 0.95)',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(252, 211, 77, 0.2)',
+                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(252, 211, 77, 0.1)',
+                            }}
+                        >
+                            {/* Gold top accent */}
+                            <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }} />
+
+                            <div className="p-6">
+                                {/* Header */}
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div
+                                        className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                        style={{ background: 'rgba(252, 211, 77, 0.15)', border: '1px solid rgba(252, 211, 77, 0.3)' }}
+                                    >
+                                        <Lock size={24} style={{ color: GOLD }} />
+                                    </div>
+                                    <div>
+                                        <h3 style={{ color: GOLD, fontSize: '18px', fontWeight: 600 }}>Konfirmasi Pembayaran</h3>
+                                        <p style={{ color: '#A3A3A3', fontSize: '13px' }}>Ikuti langkah berikut</p>
+                                    </div>
+                                </div>
+
+                                {/* Steps */}
+                                <div className="space-y-4 mb-6">
+                                    <div className="flex items-start gap-3">
+                                        <div
+                                            className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ background: 'rgba(252, 211, 77, 0.2)', color: GOLD, fontSize: '13px', fontWeight: 600 }}
+                                        >1</div>
+                                        <div>
+                                            <p style={{ color: '#E5E5E5', fontSize: '14px', lineHeight: 1.5 }}>Screenshot nomor WA ini:</p>
+                                            <div
+                                                className="mt-2 px-4 py-3 rounded-lg flex items-center justify-between"
+                                                style={{ background: 'rgba(252, 211, 77, 0.1)', border: '1px solid rgba(252, 211, 77, 0.2)' }}
+                                            >
+                                                <span style={{ color: GOLD, fontSize: '16px', fontWeight: 600, letterSpacing: '0.05em' }}>{WHATSAPP_NUMBER}</span>
+                                                <Sparkles size={16} style={{ color: GOLD }} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <div
+                                            className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ background: 'rgba(252, 211, 77, 0.2)', color: GOLD, fontSize: '13px', fontWeight: 600 }}
+                                        >2</div>
+                                        <p style={{ color: '#E5E5E5', fontSize: '14px', lineHeight: 1.5 }}>Lakukan pembayaran di halaman berikutnya</p>
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <div
+                                            className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                                            style={{ background: 'rgba(252, 211, 77, 0.2)', color: GOLD, fontSize: '13px', fontWeight: 600 }}
+                                        >3</div>
+                                        <p style={{ color: '#E5E5E5', fontSize: '14px', lineHeight: 1.5 }}>Kirim <strong style={{ color: GOLD }}>screenshot bukti transfer</strong> ke nomor WA di atas</p>
+                                    </div>
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="space-y-3">
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={handleProceedToPayment}
+                                        className="w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+                                        style={{
+                                            background: `linear-gradient(135deg, ${GOLD} 0%, #E5C558 100%)`,
+                                            color: '#0a0a0a',
+                                            fontSize: '15px',
+                                            boxShadow: '0 8px 20px rgba(252, 211, 77, 0.25)',
+                                        }}
+                                    >
+                                        <span>Lanjut ke Pembayaran</span>
+                                        <ArrowRight size={18} />
+                                    </motion.button>
+
+                                    <button
+                                        onClick={() => setShowPaymentPopup(false)}
+                                        className="w-full py-3 rounded-xl text-sm"
+                                        style={{ color: '#A3A3A3' }}
+                                    >
+                                        Batal
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
